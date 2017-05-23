@@ -28,10 +28,6 @@ func _main() error {
 	flag.StringVar(&inputfile, "input", "", "File with list of files to process")
 	flag.Parse()
 
-	fmt.Printf("packageName = %s\n", packageName)
-	fmt.Printf("output = %s\n", output)
-	fmt.Printf("inputfile = %s\n", inputfile)
-
 	// Input may come from either 1) set of files, or 2) stdin
 	var files []string
 	if !tty.IsTty(os.Stdin) {
