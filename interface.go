@@ -3,6 +3,7 @@ package packasset
 type Generator struct {
 	packageName string
 	files       []string
+	stripPrefix string
 }
 
 type Option interface {

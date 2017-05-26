@@ -7,10 +7,6 @@ import (
 	"unsafe"
 )
 
-type fder interface {
-  Fd() uintptr
-}
-
 // IsTty checks if the given fd is a tty
 func IsTty(arg interface{}) bool {
 	fdsrc, ok := arg.(fder)
