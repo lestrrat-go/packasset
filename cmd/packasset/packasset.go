@@ -23,9 +23,11 @@ func _main() error {
 	var packageName string
 	var output string
 	var inputfile string
+	var stripPrefix string
 	flag.StringVar(&packageName, "package", "main", "Name of package of the generated file")
 	flag.StringVar(&output, "output", "", "Name of file to generate")
 	flag.StringVar(&inputfile, "input", "", "File with list of files to process")
+	flag.StringVar(&stripPrefix, "strip-prefix", "", "prefix to strip")
 	flag.Parse()
 
 	// Input may come from either 1) set of files, or 2) stdin
@@ -48,10 +50,15 @@ func _main() error {
 		}
 	}
 
-	g := packasset.NewGenerator(
+	var args = []packasset.Option{
 		packasset.WithPackageName(packageName),
 		packasset.WithFiles(files),
-	)
+	}
+	if len(stripPrefix) > 0 {
+		args = append(args, packasset.WithStripPrefix(stripPrefix))
+	}
+
+	g := packasset.NewGenerator(args...)
 	buf, err := g.Generate()
 	if err != nil {
 		return errors.Wrap(err, `packasset: failed to generate code`)

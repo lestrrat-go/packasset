@@ -21,3 +21,10 @@ func WithFiles(l []string) Option {
 		value: l,
 	}
 }
+
+func WithStripPrefix(s string) Option {
+	return &option{
+		name: "strip_prefix",
+		value: s,
+	}
+}

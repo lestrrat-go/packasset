@@ -9,6 +9,7 @@ import (
 	"os"
 	"sort"
 	"strconv"
+	"strings"
 
 	"github.com/pkg/errors"
 )
@@ -16,18 +17,22 @@ import (
 func NewGenerator(options ...Option) *Generator {
 	var packageName = "main"
 	var files []string
+	var stripPrefix string
 	for _, o := range options {
 		switch o.Name() {
 		case "package_name":
 			packageName = o.Value().(string)
 		case "files":
 			files = o.Value().([]string)
+		case "strip_prefix":
+			stripPrefix = o.Value().(string)
 		}
 	}
 
 	return &Generator{
 		packageName: packageName,
 		files:       files,
+		stripPrefix: stripPrefix,
 	}
 }
 
@@ -37,7 +42,7 @@ func (g *Generator) Generate() ([]byte, error) {
 	fmt.Fprintf(&buf, "\n\npackage %s", g.packageName)
 
 	fmt.Fprintf(&buf, "\n\nimport (")
-	for _, n := range []string{"bytes", "compress/flate", "io", "reflect", "strings", "unsafe"} {
+	for _, n := range []string{"bytes", "compress/flate", "io", "strings"} {
 		fmt.Fprintf(&buf, "\n%s", strconv.Quote(n))
 	}
 	fmt.Fprintf(&buf, "\n")
@@ -55,8 +60,12 @@ func (g *Generator) Generate() ([]byte, error) {
 	sort.Strings(g.files)
 	fmt.Fprintf(&buf, "\n\nvar _assets = map[string]*asset{")
 	for _, file := range g.files {
-		fmt.Fprintf(&buf, "\n%s: {", strconv.Quote(file))
-		fmt.Fprintf(&buf, "\nname: %s,", strconv.Quote(file))
+		var internalName = file
+		if len(g.stripPrefix) > 0 {
+			internalName = strings.TrimPrefix(internalName, g.stripPrefix)
+		}
+		fmt.Fprintf(&buf, "\n%s: {", strconv.Quote(internalName))
+		fmt.Fprintf(&buf, "\nname: %s,", strconv.Quote(internalName))
 		fmt.Fprintf(&buf, "\ndata: \"")
 		content, err := g.fileContent(file)
 		if err != nil {
@@ -69,17 +78,6 @@ func (g *Generator) Generate() ([]byte, error) {
 		fmt.Fprintf(&buf, "\",")
 		fmt.Fprintf(&buf, "\n},")
 	}
-	fmt.Fprintf(&buf, "\n}")
-
-	fmt.Fprintf(&buf, "\n\nfunc toBytes(s string) []byte {")
-	fmt.Fprintf(&buf, "\nvar empty [0]byte")
-	fmt.Fprintf(&buf, "\nsx := (*reflect.StringHeader)(unsafe.Pointer(&s))")
-	fmt.Fprintf(&buf, "\nb := empty[:]")
-	fmt.Fprintf(&buf, "\nbx := (*reflect.SliceHeader)(unsafe.Pointer(&b))")
-	fmt.Fprintf(&buf, "\nbx.Data = sx.Data")
-	fmt.Fprintf(&buf, "\nbx.Len = len(s)")
-	fmt.Fprintf(&buf, "\nbx.Cap = bx.Len")
-	fmt.Fprintf(&buf, "\nreturn b")
 	fmt.Fprintf(&buf, "\n}")
 
 	fmt.Fprintf(&buf, "\n\n// Asset")
