@@ -7,8 +7,8 @@ import (
 	"io"
 	"os"
 
-	packasset "github.com/lestrrat/go-packasset"
-	"github.com/lestrrat/go-packasset/internal/tty"
+	packasset "github.com/lestrrat-go/packasset"
+	"github.com/lestrrat-go/packasset/internal/tty"
 	"github.com/pkg/errors"
 )
 

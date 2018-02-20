@@ -1,7 +1,12 @@
+# packasset
+  
+[![Build Status](https://travis-ci.org/lestrrat-go/packasset.svg?branch=master)](https://travis-ci.org/lestrrat-go/packasset)
+[![GoDoc](https://godoc.org/github.com/lestrrat-go/packasset?status.svg)](https://godoc.org/github.com/lestrrat-go/packasset)
+
 # DESCRIPTION
 
 * the old [go-bindata](https://github.com/jteeuwen/go-bindata) is no longer maintained.
-* It and has been forked [several](https://github.com/lestrrat/go-bindata) [times](https://github.com/tmthrgd/go-bindata).
+* It and has been forked [several](https://github.com/lestrrat-go/bindata) [times](https://github.com/tmthrgd/go-bindata).
 * I would love to migrate to the new [go-bindata](https://github.com/tmthrgd/go-bindata), but it does not support the CLI interface.
 * But I LIKE the CLI interface. :(
 
